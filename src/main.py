@@ -1,4 +1,3 @@
-import json
 import os
 import sys
 
@@ -12,13 +11,13 @@ def _create_parser_with_options():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--input', '-i',
-                        required=True,
                         type=convert_str_to_path,
-                        help='Input directory or file to be translated.')
+                        default='.',
+                        help='Input directory or file to be translated. Defaults to current directory.')
     parser.add_argument('--output', '-o',
                         type=convert_str_to_path,
-                        required=True,
-                        help='Output directory or file name.')
+                        default='out',
+                        help='Output directory or file name. Defaults to ./out.')
     parser.add_argument('--map', '-m',
                         required=True,
                         type=convert_str_to_path,

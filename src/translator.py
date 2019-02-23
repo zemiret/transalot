@@ -3,10 +3,16 @@ import json
 import shutil
 
 
-def translate(mapping_filepath, in_dir=os.path.realpath('.'), out_dir=os.path.realpath('out')):
+def translate(mapping_filepath, in_filepath, out_filepath):
     mapping, reverse_mapping = _create_mapping(os.path.realpath(mapping_filepath))
-    _clear_output_dir(out_dir)
-    _translate_top_dir(reverse_mapping, in_dir, out_dir)
+
+    if os.path.isdir(in_filepath):
+        _clear_output_dir(out_filepath)
+        _translate_top_dir(reverse_mapping, in_filepath, out_filepath)
+    else:
+        if not out_filepath.endswith('.py'):
+            out_filepath += '.py'
+        _translate_file(reverse_mapping, in_filepath, out_filepath)
 
 
 def _create_mapping(mapping_filepath):
@@ -30,6 +36,7 @@ def _clear_output_dir(out_dir_path):
 
 def _translate_top_dir(mapping, in_filepath, out_filepath):
     _assert_correct_input_dir(in_filepath)
+
     for file in os.listdir(in_filepath):
         translation_in_filepath = os.path.join(in_filepath, file)
         translation_out_filepath = os.path.join(out_filepath, file)

@@ -10,8 +10,10 @@ def translate(mapping_filepath, in_filepath, out_filepath):
         _clear_output_dir(out_filepath)
         _translate_top_dir(reverse_mapping, in_filepath, out_filepath)
     else:
-        if not out_filepath.endswith('.py'):
-            out_filepath += '.py'
+        in_file_extension = '.' + in_filepath.split('.')[-1]
+        if not out_filepath.endswith(in_file_extension):
+            out_filepath += in_file_extension
+
         _translate_file(reverse_mapping, in_filepath, out_filepath)
 
 

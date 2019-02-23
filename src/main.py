@@ -1,37 +1,50 @@
 import json
 import os
+import sys
+
 from translator import translate
+import argparse
 
 
-def test():
-    map_file = None
-    out_file = None
-    in_file = None
-    try:
-        map_file = open(os.path.realpath('src/mappings/lotrPython.json'))
-        in_file = open(os.path.realpath('playground/lotrpy.py'))
-        out_file = open(os.path.realpath('out/out.py'), 'w+')
+def _create_parser_with_options():
+    convert_str_to_path = (lambda str_path: os.path.realpath(str_path))
 
-        mapping = json.load(map_file)
-        reverse_mapping = {(v, k) for k, v in mapping.items()}
+    parser = argparse.ArgumentParser()
 
-        content = in_file.read()
-        for k, v in reverse_mapping:
-            content = content.replace(k, v)
+    parser.add_argument('--input', '-i',
+                        required=True,
+                        type=convert_str_to_path,
+                        help='Input directory or file to be translated.')
+    parser.add_argument('--output', '-o',
+                        type=convert_str_to_path,
+                        required=True,
+                        help='Output directory or file name.')
+    parser.add_argument('--map', '-m',
+                        required=True,
+                        type=convert_str_to_path,
+                        help='Mapping that you want to use for your language.')
 
-        out_file.write(content)
+    return parser
 
-    finally:
-        map_file.close()
-        out_file.close()
-        in_file.close()
+
+def _get_paths_from_arguments(parser):
+    parsed_arguments = parser.parse_args()
+
+    input_filepath = parsed_arguments.input
+    output_filepath = parsed_arguments.output
+    mapping_filepath = parsed_arguments.map
+
+    return input_filepath, output_filepath, mapping_filepath
 
 
 def main():
-    mapping_filepath = os.path.realpath('src/mappings/lotrPython.json')
-    in_dir_path = os.path.realpath('playground')
-    out_dir_path = os.path.realpath('out')
-    translate(mapping_filepath, in_dir_path, out_dir_path)
+    parser = _create_parser_with_options()
+
+    if len(sys.argv) == 1:
+        parser.print_usage()
+    else:
+        in_filepath, out_filepath, mapping_filepath = _get_paths_from_arguments(parser)
+        translate(mapping_filepath, in_filepath, out_filepath)
 
 
 if __name__ == "__main__":
